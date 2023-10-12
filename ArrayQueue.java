@@ -9,6 +9,8 @@ public class ArrayQueue<T> implements QueueInterface<T>
 {
     private int size;
     private T[] log;
+    private int front = 0;
+    private int back = 0;
     /**
      * Constructor for objects of class ArrayStack
      */
@@ -17,8 +19,6 @@ public class ArrayQueue<T> implements QueueInterface<T>
         size = 0;
         log = (T[]) new Object[4];
     }
-    
-
     // Returns the logical size of this StringLog.
     public int size()
     {
@@ -30,60 +30,46 @@ public class ArrayQueue<T> implements QueueInterface<T>
     {
         return size == 0;
     }
+    
     public T peek() throws QueueUnderflowException {
     if (size == 0 || log == null) {
         throw new QueueUnderflowException();
     }
-    for(int i = 0; i < log.length; i++){
-        if(log[i] != null){
-            return log[i];
-     
-        }
-    }
-    return null;
+    return log[front];
     }
     public T remove() throws QueueUnderflowException{
-        int index = 0;
         if (size == 0 || log == null) {
         throw new QueueUnderflowException();
         }
-        else{
-        for(int i = 0; i < log.length; i++){
-        if(log[i] != null){
-            index = i;
-     
-        }
-    }
-        T removedElement = log[index];
-        log[index] = null;
+        T removedElement = log[front];
+        log[front] = null;
         size--;
+        front = (front+1)%log.length;
         return removedElement;
         }
-}
     public boolean isFull()
     {
         return size == log.length;
     }
     public T add(T item){
         if (isFull()) {
-        // Double the array size if it's full
         T[] log2 = (T[]) new Object[log.length * 2];
-        System.arraycopy(log, 0, log2, 0, log.length);
+        for (int i = 0; i < size; i++) {
+            log2[i] = log[(front + i) % log.length];
+        }
+        front = 0;
+        back = size;
         log = log2;
     }
-    log[size++] = item;
+    log[back] = item;
+    size++;
+    back = (back + 1) % log.length;
     return item;
     }
     public void clear(){
         log = null;
-        size =0;
-    }
-    public int search(Object o){
-        for(int i = size-1; i >= 0; i--){
-            if(log[i].equals(o)){
-                return size - i;
-            }
-        }
-        return -1;
+        size = 0;
+        front = 0;
+        back = 0;
     }
 }
