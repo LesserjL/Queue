@@ -5,7 +5,7 @@
  * @author (your name)
  * @version (a version number or a date)
  */
-public class LinkedQueue<T>
+public class LinkedQueue<T> implements QueueInterface<T>
 {
     // instance variables - replace the example below with your own
     private int size;
@@ -17,8 +17,9 @@ public class LinkedQueue<T>
      */
     public LinkedQueue()
     {
-        size = 0;
         log = null;
+        front = log;
+        size = 0;
     }
 
     public int size()
@@ -31,52 +32,42 @@ public class LinkedQueue<T>
     {
         return size == 0;
     }
-    public T peek() throws QueueUnderflowException{
+     public T peek() throws QueueUnderflowException{
          if (size == 0 || log == null) {
             throw new QueueUnderflowException();
         }
-        LLNode<T> currIndex = log;
-        int count = 0;
-        while (count < size - 1) {
-            if(currIndex.getInfo() != null){
-                return currIndex.getInfo();
-            }
-            currIndex = currIndex.getLink();
-            count++;
-        }
-        return currIndex.getInfo();   
+        return log.getInfo();   
     }
     public T add(T item){
         LLNode<T> newNode = new LLNode<>(item);
-    if (log == null) {
-        log = newNode;
-    } else {
-        LLNode<T> currIndex = log;
-        while (currIndex.getLink() != null) {
-            currIndex = currIndex.getLink();
+        if (log == null) {
+            log = newNode;
+            front = log;
+            back = log;
         }
-        currIndex.setLink(newNode);
-        back = currIndex.getLink();
+        else{
+            back.setLink(newNode);
+            back = newNode;
+        }
+        size++;
+        return item;
     }
-    size++;
-    return item;
-    }
-    public void remove() throws QueueUnderflowException{
-        if(log == null || size == 0){
+    public T remove() throws QueueUnderflowException{
+        if(size == 0 || log == null){
             throw new QueueUnderflowException();
         }
-        LLNode<T> currIndex = log;
-        while(true){
-            if(currIndex.getLink() != null){
-                front = currIndex.getLink();
+        else{
+            T removedItem = front.getInfo();
+            front = front.getLink();
+            if(front == null){
+                back = null;
             }
-            else{
-                continue;
-            }
+            size--;
+            return removedItem;
         }
     }
     public void clear(){
         log = null;
-        size =0;
+        size = 0;
     }
 }
