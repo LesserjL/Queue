@@ -30,30 +30,31 @@ public class LinkedQueue<T> implements QueueInterface<T>
     // Returns true if this list contains no elements.
     public boolean empty()
     {
-        return size == 0;
+        if(front == null || size == 0){
+            return true;
+        }
+        return false;
     }
      public T peek() throws QueueUnderflowException{
-         if (size == 0 || log == null) {
+         if (empty()) {
             throw new QueueUnderflowException();
         }
-        return log.getInfo();   
+        return front.getInfo();   
     }
     public T add(T item){
         LLNode<T> newNode = new LLNode<>(item);
-        if (log == null) {
-            log = newNode;
-            front = log;
-            back = log;
+        if (back == null) {
+            front = newNode;
         }
         else{
             back.setLink(newNode);
-            back = newNode;
         }
+        back = newNode;
         size++;
         return item;
     }
     public T remove() throws QueueUnderflowException{
-        if(size == 0 || log == null){
+        if(empty()){
             throw new QueueUnderflowException();
         }
         else{
